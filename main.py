@@ -63,17 +63,18 @@ def send_ra(dst_mac, dst_lla, real_mac, src_mac, src_lla, router_lifetime=300):
     print(f"[+] 已向 {dst_mac} ({dst_lla}) 发送 RA，网关指向 {src_lla}")
 
 if __name__ == "__main__":
-    sniffer = neigh.start_discovery_thread(IFACE)
+    #sniffer = neigh.start_discovery_thread(IFACE)
     while True:
-        neigh.refresh_neighbors(IFACE)
-        time.sleep(2)  # 等待Ping响应
+        #neigh.refresh_neighbors(IFACE)
+        #time.sleep(2)  # 等待Ping响应
 
         # 1. 给父母手机发 RA：网关指向【主路由】
         for p in DIRECT_DEVICE:
-            send_ra(p, neigh.get_ipv6_by_mac_fast(p),SIDE_MAC ,MAIN_MAC, MAIN_LLA)
+            send_ra(p, "ff02::1",SIDE_MAC ,MAIN_MAC, MAIN_LLA)
 
         # 2. 给自己手机发 RA：网关指向【旁路由】
         for device_mac in PROXY_DEVICE:
-            send_ra(device_mac, neigh.get_ipv6_by_mac_fast(device_mac), SIDE_MAC,SIDE_MAC, SIDE_LLA)
+            #send_ra(device_mac, neigh.get_ipv6_by_mac_fast(device_mac), SIDE_MAC,SIDE_MAC, SIDE_LLA)
+            send_ra(device_mac, "ff02::1", SIDE_MAC, SIDE_MAC, SIDE_LLA)
 
         time.sleep(150)
